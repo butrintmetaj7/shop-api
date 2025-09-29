@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('image');
             $table->json('rating');
             $table->timestamps();
+            
+            $table->unique(['title', 'category']);
         });
     }
 
