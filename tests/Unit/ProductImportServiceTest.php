@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Product;
-use App\Services\ProductImportService;
+use App\Services\Product\ProductImportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Factory as HttpClient;
 use Illuminate\Http\Client\Response;

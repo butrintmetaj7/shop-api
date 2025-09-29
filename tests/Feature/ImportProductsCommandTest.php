@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\ProductImportService;
+use App\Services\Product\ProductImportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\ProductImportService;
+use App\Services\Product\ProductImportService;
 use Illuminate\Console\Command;
 
 class ImportFakeStoreProducts extends Command
