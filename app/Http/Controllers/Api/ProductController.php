@@ -13,10 +13,7 @@ class ProductController extends ApiController
     {
         $products = Product::paginate(10);
 
-        return $this->successResponseWithPagination(
-            $products,
-            ProductResource::collection($products->items())
-        );
+        return $this->successResponseWithPagination($products, ProductResource::collection($products->items()));
     }
 
     public function show(Product $product)
@@ -26,9 +23,9 @@ class ProductController extends ApiController
 
     public function update(UpdateProductRequest $request, Product $product)
     {
-        if($product->update($request->validated())) {
-            return $this->successResponse('Product updated successfully', new ProductResource($product));
-        }
-        return $this->errorResponse('Product not updated');
+        $product->update($request->validated());
+
+        return $this->successResponse('Product updated successfully', new ProductResource($product));
+
     }
 }
