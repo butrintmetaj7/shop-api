@@ -112,4 +112,16 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | API Token Name
+    |--------------------------------------------------------------------------
+    |
+    | This value defines the default token name used when creating API tokens
+    | for authentication. You may change this value as needed.
+    |
+    */
+
+    'token_name' => env('AUTH_TOKEN_NAME', 'auth_token'),
+
 ];

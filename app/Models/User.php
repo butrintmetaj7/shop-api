@@ -45,4 +45,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Generate an API token for the user.
+     */
+    public function generateApiToken(): string
+    {
+        return $this->createToken(config('auth.token_name'))->plainTextToken;
+    }
 }
