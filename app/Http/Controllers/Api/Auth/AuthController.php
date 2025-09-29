@@ -37,4 +37,9 @@ class AuthController extends ApiController
 
         return $this->successResponse('Logged out successfully');
     }
+
+    public function profile(): JsonResponse
+    {
+        return $this->successResponse('Profile retrieved successfully', auth()->user());
+    }
 }

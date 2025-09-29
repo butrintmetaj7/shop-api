@@ -220,7 +220,7 @@ class AuthControllerTest extends TestCase
         $this->assertNotEmpty($token);
 
         $authResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson('/api/user');
+            ->getJson('/api/auth/profile');
 
         $authResponse->assertStatus(200);
     }
@@ -242,7 +242,7 @@ class AuthControllerTest extends TestCase
         $this->assertNotEmpty($token);
 
         $authResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson('/api/user');
+            ->getJson('/api/auth/profile');
 
         $authResponse->assertStatus(200);
     }
