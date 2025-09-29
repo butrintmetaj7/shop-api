@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Traits;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 trait ApiResponseTrait
 {
@@ -39,6 +40,22 @@ trait ApiResponseTrait
         return $this->successResponse($message, [
             'user' => $user,
             'token' => $token,
+        ], $statusCode);
+    }
+
+    protected function successResponseWithPagination(LengthAwarePaginator $paginator, $resourceCollection, int $statusCode = 200): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'data' => $resourceCollection,
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
+            ]
         ], $statusCode);
     }
 }

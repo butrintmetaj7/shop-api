@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,3 +15,6 @@ Route::prefix('auth')->group(function () {
     });
 });
 
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::apiResource('products', ProductController::class)->only(['index', 'show', 'update']);
+});
