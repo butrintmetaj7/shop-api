@@ -13,6 +13,6 @@ class Product extends Model
 
     protected $casts = [
         'rating' => 'array',
-        'price' => 'decimal:2'
+        'price' => 'float'
     ];
 }
