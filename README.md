@@ -29,9 +29,9 @@ php artisan products:import
 ## API Endpoints
 
 ### Authentication
-- `POST /api/register` - User registration
-- `POST /api/login` - User authentication
-- `POST /api/logout` - User logout
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User authentication
+- `POST /api/auth/logout` - User logout
 
 ### Products
 - `GET /api/products` - List all products
