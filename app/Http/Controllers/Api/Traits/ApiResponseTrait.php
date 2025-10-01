@@ -47,15 +47,13 @@ trait ApiResponseTrait
     {
         return response()->json([
             'success' => true,
-            'data' => [
-                'data' => $resourceCollection,
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-                'from' => $paginator->firstItem(),
-                'to' => $paginator->lastItem(),
-            ]
+            'data' => $resourceCollection,
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'per_page' => $paginator->perPage(),
+            'total' => $paginator->total(),
+            'from' => $paginator->firstItem(),
+            'to' => $paginator->lastItem(),    
         ], $statusCode);
     }
 }

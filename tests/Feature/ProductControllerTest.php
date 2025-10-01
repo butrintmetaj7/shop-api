@@ -35,7 +35,6 @@ class ProductControllerTest extends TestCase
             ->assertJsonStructure([
                 'success',
                 'data' => [
-                    'data' => [
                         '*' => [
                             'id',
                             'title',
@@ -48,10 +47,9 @@ class ProductControllerTest extends TestCase
                     'last_page',
                     'per_page',
                     'total'
-                ]
             ]);
 
-        $this->assertCount(3, $response->json('data.data'));
+        $this->assertCount(3, $response->json('data'));
     }
 
     public function test_products_list_returns_correct_resource_structure()
@@ -62,7 +60,7 @@ class ProductControllerTest extends TestCase
 
         $response->assertStatus(200);
         
-        $products = $response->json('data.data');
+        $products = $response->json('data');
         $firstProduct = $products[0];
 
         $expectedKeys = ['id', 'title', 'price', 'description', 'category', 'image'];
@@ -79,7 +77,8 @@ class ProductControllerTest extends TestCase
 
         $response->assertStatus(200);
 
-        $data = $response->json('data');
+        $data = $response->json();
+
         $this->assertEquals(1, $data['current_page']);
         $this->assertEquals(10, $data['per_page']);
         $this->assertEquals(15, $data['total']);
