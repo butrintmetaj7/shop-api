@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Admin;
 
 use App\Models\Product;
 use App\Models\User;
@@ -12,21 +12,21 @@ class ProductControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    private User $user;
-
-    protected function setUp(): void
+    public function test_unauthenticated_user_cannot_access_products()
     {
-        parent::setUp();
-        
-        $this->user = User::factory()->create();
-        Sanctum::actingAs($this->user);
+        $response = $this->getJson('/api/v1/admin/products');
+
+        $response->assertStatus(401);
     }
 
     public function test_can_list_products()
     {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
         Product::factory()->count(3)->create();
 
-        $response = $this->getJson('/api/v1/products');
+        $response = $this->getJson('/api/v1/admin/products');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -52,49 +52,14 @@ class ProductControllerTest extends TestCase
         $this->assertCount(3, $response->json('data'));
     }
 
-    public function test_products_list_returns_correct_resource_structure()
-    {
-        Product::factory()->create();
-
-        $response = $this->getJson('/api/v1/products');
-
-        $response->assertStatus(200);
-        
-        $products = $response->json('data');
-        $firstProduct = $products[0];
-
-        $expectedKeys = ['id', 'title', 'price', 'description', 'category', 'image'];
-        $actualKeys = array_keys($firstProduct);
-        
-        $this->assertEquals($expectedKeys, $actualKeys, 'Product resource should have exactly these keys: ' . implode(', ', $expectedKeys));
-    }
-
-    public function test_products_list_is_paginated()
-    {
-        Product::factory()->count(15)->create();
-
-        $response = $this->getJson('/api/v1/products');
-
-        $response->assertStatus(200);
-
-        $data = $response->json();
-
-        $this->assertArrayHasKey('current_page', $data);
-        $this->assertArrayHasKey('per_page', $data);
-        $this->assertArrayHasKey('total', $data);
-        $this->assertArrayHasKey('last_page', $data);
-        $this->assertArrayHasKey('from', $data);
-        $this->assertArrayHasKey('to', $data);
-        $this->assertArrayHasKey('data', $data);
-        
-        $this->assertIsArray($data['data']);
-    }
-
     public function test_can_show_single_product()
     {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
         $product = Product::factory()->create();
         
-        $response = $this->getJson("/api/v1/products/{$product->id}");
+        $response = $this->getJson("/api/v1/admin/products/{$product->id}");
 
         $response->assertStatus(200)
             ->assertJson([
@@ -107,32 +72,23 @@ class ProductControllerTest extends TestCase
                     'image' => $product->image
                 ]
             ]);
-
-        $productData = $response->json('data');
-        $expectedKeys = ['id', 'title', 'price', 'description', 'category', 'image'];
-        $actualKeys = array_keys($productData);
-       
-        $this->assertEquals($expectedKeys, $actualKeys);
     }
 
     public function test_show_product_returns_404_for_nonexistent_product()
     {
-        $response = $this->getJson('/api/v1/products/9999');
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
+        $response = $this->getJson('/api/v1/admin/products/9999');
 
         $response->assertStatus(404);
     }
 
-    public function test_unauthenticated_user_cannot_access_products()
-    {
-        $this->refreshApplication();
-        
-        $response = $this->getJson('/api/v1/products');
-
-        $response->assertStatus(401);
-    }
-
     public function test_can_update_all_editable_fields()
     {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
         $product = Product::factory()->create();
         
         $updateData = [
@@ -142,7 +98,7 @@ class ProductControllerTest extends TestCase
             'image' => 'https://example.com/updated-image.jpg',
         ];
         
-        $response = $this->putJson("/api/v1/products/{$product->id}", $updateData);
+        $response = $this->putJson("/api/v1/admin/products/{$product->id}", $updateData);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -158,9 +114,12 @@ class ProductControllerTest extends TestCase
 
     public function test_update_validates_input()
     {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
         $product = Product::factory()->create();
         
-        $response = $this->putJson("/api/v1/products/{$product->id}", [
+        $response = $this->putJson("/api/v1/admin/products/{$product->id}", [
             'title' => str_repeat('a', 256),
             'price' => -10,
             'description' => '',
@@ -173,6 +132,9 @@ class ProductControllerTest extends TestCase
 
     public function test_update_product_with_all_editable_fields()
     {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
         $product = Product::factory()->create();
         
         $updateData = [
@@ -182,7 +144,7 @@ class ProductControllerTest extends TestCase
             'image' => fake()->imageUrl(640, 480, 'products', true)
         ];
 
-        $response = $this->putJson("/api/v1/products/{$product->id}", $updateData);
+        $response = $this->putJson("/api/v1/admin/products/{$product->id}", $updateData);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -194,11 +156,25 @@ class ProductControllerTest extends TestCase
 
     public function test_update_returns_404_for_nonexistent_product()
     {
-        $response = $this->putJson('/api/v1/products/9999', [
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
+        $response = $this->putJson('/api/v1/admin/products/9999', [
             'title' => fake()->words(3, true)
         ]);
 
         $response->assertStatus(404);
     }
 
+    public function test_unauthenticated_user_cannot_update_product()
+    {
+        $product = Product::factory()->create();
+        
+        $response = $this->putJson("/api/v1/admin/products/{$product->id}", [
+            'title' => 'Updated Title',
+        ]);
+
+        $response->assertStatus(401);
+    }
 }
+

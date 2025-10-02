@@ -130,12 +130,11 @@ GET /api/v1/auth/profile
 Authorization: Bearer {token}
 ```
 
-### Products (All require Authentication)
+### Shop (Public - No Authentication Required)
 
 #### List Products (Paginated)
 ```http
-GET /api/v1/products
-Authorization: Bearer {token}
+GET /api/v1/shop/products
 ```
 
 **Response:**
@@ -163,13 +162,45 @@ Authorization: Bearer {token}
 
 #### Get Single Product
 ```http
-GET /api/v1/products/{id}
+GET /api/v1/shop/products/{id}
+```
+
+**Response:**
+```json
+{
+    "success": true,
+    "data": {
+        "id": 1,
+        "title": "Product Name",
+        "price": 109.95,
+        "description": "Product description",
+        "category": "men's clothing",
+        "image": "https://..."
+    }
+}
+```
+
+### Admin (Requires Authentication)
+
+#### List Products (Paginated)
+```http
+GET /api/v1/admin/products
 Authorization: Bearer {token}
 ```
 
+**Response:** Same as shop products list
+
+#### Get Single Product
+```http
+GET /api/v1/admin/products/{id}
+Authorization: Bearer {token}
+```
+
+**Response:** Same as shop single product
+
 #### Update Product
 ```http
-PUT /api/v1/products/{id}
+PUT /api/v1/admin/products/{id}
 Authorization: Bearer {token}
 Content-Type: application/json
 
@@ -179,6 +210,22 @@ Content-Type: application/json
     "description": "Updated description",
     "category": "electronics",
     "image": "https://..."
+}
+```
+
+**Response:**
+```json
+{
+    "success": true,
+    "message": "Product updated successfully",
+    "data": {
+        "id": 1,
+        "title": "Updated Product Name",
+        "price": 129.99,
+        "description": "Updated description",
+        "category": "electronics",
+        "image": "https://..."
+    }
 }
 ```
 
