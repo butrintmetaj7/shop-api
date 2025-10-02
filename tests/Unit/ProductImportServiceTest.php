@@ -85,7 +85,8 @@ class ProductImportServiceTest extends TestCase
             'price' => 10.00,
             'description' => 'Old description',
             'image' => 'old-image.jpg',
-            'rating' => ['rate' => 3.0, 'count' => 50]
+            'rating' => ['rate' => 3.0, 'count' => 50],
+            'external_id' => 1
         ]);
 
         $mockProducts = [

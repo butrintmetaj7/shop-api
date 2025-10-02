@@ -35,14 +35,6 @@ trait ApiResponseTrait
         return response()->json($response, $statusCode);
     }
 
-    protected function authResponse(string $message, $user, string $token, int $statusCode = 200): JsonResponse
-    {
-        return $this->successResponse($message, [
-            'user' => $user,
-            'token' => $token,
-        ], $statusCode);
-    }
-
     protected function successResponseWithPagination(LengthAwarePaginator $paginator, $resourceCollection, int $statusCode = 200): JsonResponse
     {
         return response()->json([

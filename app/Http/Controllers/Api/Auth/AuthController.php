@@ -18,19 +18,17 @@ class AuthController extends ApiController
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = $this->authService->registerUser($request->validated());
-
         $token = $user->generateApiToken();
 
-        return $this->authResponse('User registered successfully', $user, $token, 201);
+        return $this->successResponse('User registered successfully', compact('user', 'token'), 201);
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
         $user = $this->authService->attemptLogin($request->validated());
-        
         $token = $user->generateApiToken();
 
-        return $this->authResponse('Login successful', $user, $token);
+        return $this->successResponse('Login successful', compact('user', 'token'));
     }
 
     public function logout(Request $request): JsonResponse

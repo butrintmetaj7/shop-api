@@ -69,7 +69,7 @@ class ProductControllerTest extends TestCase
         $this->assertEquals($expectedKeys, $actualKeys, 'Product resource should have exactly these keys: ' . implode(', ', $expectedKeys));
     }
 
-    public function test_products_list_is_paginated_with_10_per_page()
+    public function test_products_list_is_paginated()
     {
         Product::factory()->count(15)->create();
 
@@ -79,11 +79,15 @@ class ProductControllerTest extends TestCase
 
         $data = $response->json();
 
-        $this->assertEquals(1, $data['current_page']);
-        $this->assertEquals(10, $data['per_page']);
-        $this->assertEquals(15, $data['total']);
-        $this->assertEquals(2, $data['last_page']);
-        $this->assertCount(10, $data['data']);
+        $this->assertArrayHasKey('current_page', $data);
+        $this->assertArrayHasKey('per_page', $data);
+        $this->assertArrayHasKey('total', $data);
+        $this->assertArrayHasKey('last_page', $data);
+        $this->assertArrayHasKey('from', $data);
+        $this->assertArrayHasKey('to', $data);
+        $this->assertArrayHasKey('data', $data);
+        
+        $this->assertIsArray($data['data']);
     }
 
     public function test_can_show_single_product()

@@ -26,6 +26,7 @@ class ProductFactory extends Factory
                 'rate' => fake()->randomFloat(1, 1, 5),
                 'count' => fake()->numberBetween(1, 1000)
             ],
+            'external_id' => fake()->unique()->numberBetween(1, 999999),
         ];
     }
 

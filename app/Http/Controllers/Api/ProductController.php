@@ -11,7 +11,7 @@ class ProductController extends ApiController
 {
     public function index()
     {
-        $products = Product::paginate(10);
+        $products = Product::paginate();
 
         return $this->successResponseWithPagination($products, ProductResource::collection($products->items()));
     }
