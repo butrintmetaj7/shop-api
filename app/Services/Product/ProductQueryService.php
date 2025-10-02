@@ -7,9 +7,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProductQueryService
 {
-    private const DEFAULT_PER_PAGE = 15;
-    private const MAX_PER_PAGE = 100;
-
     public function getFilteredProducts(array $filters = []): LengthAwarePaginator
     {
         $perPage = $this->getPerPage($filters['per_page'] ?? null);
@@ -27,10 +24,10 @@ class ProductQueryService
     private function getPerPage(?int $perPage): int
     {
         if ($perPage === null) {
-            return self::DEFAULT_PER_PAGE;
+            return config('app.pagination.default_per_page');
         }
 
-        return min($perPage, self::MAX_PER_PAGE);
+        return min($perPage, config('app.pagination.max_per_page'));
     }
 }
 

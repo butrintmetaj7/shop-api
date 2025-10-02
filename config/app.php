@@ -123,4 +123,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Pagination Settings
+    |--------------------------------------------------------------------------
+    |
+    | These values control the default pagination behavior across the application.
+    |
+    */
+
+    'pagination' => [
+        'default_per_page' => env('PAGINATION_PER_PAGE', 15),
+        'max_per_page' => env('PAGINATION_MAX_PER_PAGE', 100),
+    ],
+
 ];
