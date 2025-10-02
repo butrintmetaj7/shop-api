@@ -51,8 +51,8 @@ class ProductImportService
 
         Product::upsert(
             $upsertData,
-            ['title', 'category'],
-            ['price', 'description', 'image', 'rating', 'updated_at']
+            ['external_id'],
+            ['price', 'description', 'category', 'image', 'rating', 'updated_at']
         );
 
         return count($upsertData);
@@ -61,6 +61,7 @@ class ProductImportService
     protected function transformProductData(array $productData): array
     {
         return [
+            'external_id' => $productData['id'],
             'title' => $productData['title'],
             'price' => $productData['price'],
             'description' => $productData['description'],

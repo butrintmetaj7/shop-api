@@ -33,15 +33,15 @@ class ImportFakeStoreProducts extends Command
 
             if (!$result['success']) {
                 $this->error($result['message']);
-                return 1;
+                return Command::FAILURE;
             }
 
             $this->info($result['message']);
-            return 0;
+            return Command::SUCCESS;
 
         } catch (\Exception $e) {
             $this->error('Error during import: ' . $e->getMessage());
-            return 1;
+            return Command::FAILURE;
         }
     }
 }
