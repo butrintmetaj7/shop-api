@@ -14,7 +14,7 @@ class AuthControllerTest extends TestCase
 
     public function test_user_can_register()
     {
-        $response = $this->postJson('/api/auth/register', [
+        $response = $this->postJson('/api/v1/auth/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'password' => 'password123',
@@ -49,7 +49,7 @@ class AuthControllerTest extends TestCase
 
     public function test_registration_validates_required_fields()
     {
-        $response = $this->postJson('/api/auth/register', []);
+        $response = $this->postJson('/api/v1/auth/register', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'email', 'password']);
@@ -57,7 +57,7 @@ class AuthControllerTest extends TestCase
 
     public function test_registration_validates_email_format()
     {
-        $response = $this->postJson('/api/auth/register', [
+        $response = $this->postJson('/api/v1/auth/register', [
             'name' => 'John Doe',
             'email' => 'invalid-email',
             'password' => 'password123',
@@ -76,7 +76,7 @@ class AuthControllerTest extends TestCase
             'password' => Hash::make('password'),
         ]);
 
-        $response = $this->postJson('/api/auth/register', [
+        $response = $this->postJson('/api/v1/auth/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'password' => 'password123',
@@ -89,7 +89,7 @@ class AuthControllerTest extends TestCase
 
     public function test_registration_validates_password_confirmation()
     {
-        $response = $this->postJson('/api/auth/register', [
+        $response = $this->postJson('/api/v1/auth/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'password' => 'password123',
@@ -102,7 +102,7 @@ class AuthControllerTest extends TestCase
 
     public function test_registration_validates_minimum_password_length()
     {
-        $response = $this->postJson('/api/auth/register', [
+        $response = $this->postJson('/api/v1/auth/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'password' => 'short',
@@ -121,7 +121,7 @@ class AuthControllerTest extends TestCase
             'password' => Hash::make('password123'),
         ]);
 
-        $response = $this->postJson('/api/auth/login', [
+        $response = $this->postJson('/api/v1/auth/login', [
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
@@ -147,7 +147,7 @@ class AuthControllerTest extends TestCase
 
     public function test_login_fails_with_invalid_email()
     {
-        $response = $this->postJson('/api/auth/login', [
+        $response = $this->postJson('/api/v1/auth/login', [
             'email' => 'nonexistent@example.com',
             'password' => 'password123',
         ]);
@@ -164,7 +164,7 @@ class AuthControllerTest extends TestCase
             'password' => Hash::make('correctpassword'),
         ]);
 
-        $response = $this->postJson('/api/auth/login', [
+        $response = $this->postJson('/api/v1/auth/login', [
             'email' => 'test@example.com',
             'password' => 'wrongpassword',
         ]);
@@ -175,7 +175,7 @@ class AuthControllerTest extends TestCase
 
     public function test_login_validates_required_fields()
     {
-        $response = $this->postJson('/api/auth/login', []);
+        $response = $this->postJson('/api/v1/auth/login', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['email', 'password']);
@@ -191,7 +191,7 @@ class AuthControllerTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $response = $this->postJson('/api/auth/logout');
+        $response = $this->postJson('/api/v1/auth/logout');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -202,14 +202,14 @@ class AuthControllerTest extends TestCase
 
     public function test_unauthenticated_user_cannot_logout()
     {
-        $response = $this->postJson('/api/auth/logout');
+        $response = $this->postJson('/api/v1/auth/logout');
 
         $response->assertStatus(401);
     }
 
     public function test_registration_returns_valid_token()
     {
-        $response = $this->postJson('/api/auth/register', [
+        $response = $this->postJson('/api/v1/auth/register', [
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'password' => 'password123',
@@ -220,7 +220,7 @@ class AuthControllerTest extends TestCase
         $this->assertNotEmpty($token);
 
         $authResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson('/api/auth/profile');
+            ->getJson('/api/v1/auth/profile');
 
         $authResponse->assertStatus(200);
     }
@@ -233,7 +233,7 @@ class AuthControllerTest extends TestCase
             'password' => Hash::make('password123'),
         ]);
 
-        $response = $this->postJson('/api/auth/login', [
+        $response = $this->postJson('/api/v1/auth/login', [
             'email' => 'test@example.com',
             'password' => 'password123',
         ]);
@@ -242,7 +242,7 @@ class AuthControllerTest extends TestCase
         $this->assertNotEmpty($token);
 
         $authResponse = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson('/api/auth/profile');
+            ->getJson('/api/v1/auth/profile');
 
         $authResponse->assertStatus(200);
     }

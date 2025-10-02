@@ -26,7 +26,7 @@ class ProductControllerTest extends TestCase
     {
         Product::factory()->count(3)->create();
 
-        $response = $this->getJson('/api/products');
+        $response = $this->getJson('/api/v1/products');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -56,7 +56,7 @@ class ProductControllerTest extends TestCase
     {
         Product::factory()->create();
 
-        $response = $this->getJson('/api/products');
+        $response = $this->getJson('/api/v1/products');
 
         $response->assertStatus(200);
         
@@ -73,7 +73,7 @@ class ProductControllerTest extends TestCase
     {
         Product::factory()->count(15)->create();
 
-        $response = $this->getJson('/api/products');
+        $response = $this->getJson('/api/v1/products');
 
         $response->assertStatus(200);
 
@@ -94,7 +94,7 @@ class ProductControllerTest extends TestCase
     {
         $product = Product::factory()->create();
         
-        $response = $this->getJson("/api/products/{$product->id}");
+        $response = $this->getJson("/api/v1/products/{$product->id}");
 
         $response->assertStatus(200)
             ->assertJson([
@@ -117,7 +117,7 @@ class ProductControllerTest extends TestCase
 
     public function test_show_product_returns_404_for_nonexistent_product()
     {
-        $response = $this->getJson('/api/products/9999');
+        $response = $this->getJson('/api/v1/products/9999');
 
         $response->assertStatus(404);
     }
@@ -126,7 +126,7 @@ class ProductControllerTest extends TestCase
     {
         $this->refreshApplication();
         
-        $response = $this->getJson('/api/products');
+        $response = $this->getJson('/api/v1/products');
 
         $response->assertStatus(401);
     }
@@ -142,7 +142,7 @@ class ProductControllerTest extends TestCase
             'image' => 'https://example.com/updated-image.jpg',
         ];
         
-        $response = $this->putJson("/api/products/{$product->id}", $updateData);
+        $response = $this->putJson("/api/v1/products/{$product->id}", $updateData);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -160,7 +160,7 @@ class ProductControllerTest extends TestCase
     {
         $product = Product::factory()->create();
         
-        $response = $this->putJson("/api/products/{$product->id}", [
+        $response = $this->putJson("/api/v1/products/{$product->id}", [
             'title' => str_repeat('a', 256),
             'price' => -10,
             'description' => '',
@@ -182,7 +182,7 @@ class ProductControllerTest extends TestCase
             'image' => fake()->imageUrl(640, 480, 'products', true)
         ];
 
-        $response = $this->putJson("/api/products/{$product->id}", $updateData);
+        $response = $this->putJson("/api/v1/products/{$product->id}", $updateData);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -194,7 +194,7 @@ class ProductControllerTest extends TestCase
 
     public function test_update_returns_404_for_nonexistent_product()
     {
-        $response = $this->putJson('/api/products/9999', [
+        $response = $this->putJson('/api/v1/products/9999', [
             'title' => fake()->words(3, true)
         ]);
 
