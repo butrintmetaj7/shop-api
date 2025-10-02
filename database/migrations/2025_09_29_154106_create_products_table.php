@@ -19,10 +19,11 @@ return new class extends Migration
             $table->string('category');
             $table->string('image');
             $table->json('rating');
+            $table->string('external_source');
             $table->unsignedBigInteger('external_id');
             $table->timestamps();
             
-            $table->unique(['external_id']);
+            $table->unique(['external_source', 'external_id']);
         });
     }
 

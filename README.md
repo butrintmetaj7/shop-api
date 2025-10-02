@@ -232,8 +232,11 @@ Content-Type: application/json
 ## Commands
 
 ```bash
-# Import products from Fake Store API
+# Import products from Fake Store API (default)
 php artisan products:import
+
+# Import from specific source
+php artisan products:import --source=fakestore
 
 # Run tests
 php artisan test

@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Product;
 use App\Services\Product\ProductImportService;
+use App\Services\Product\Importers\FakeStoreProductImporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Factory as HttpClient;
 use Illuminate\Http\Client\Response;
@@ -19,7 +20,8 @@ class ProductImportServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new ProductImportService(Http::getFacadeRoot());
+        $importer = new FakeStoreProductImporter(Http::getFacadeRoot());
+        $this->service = new ProductImportService($importer);
     }
 
     public function test_imports_products_successfully()
@@ -44,9 +46,11 @@ class ProductImportServiceTest extends TestCase
 
         $this->assertTrue($result['success']);
         $this->assertEquals(1, $result['processed']);
-        $this->assertStringContainsString('Successfully processed 1 products', $result['message']);
+        $this->assertStringContainsString('Successfully imported 1 products', $result['message']);
         
         $this->assertDatabaseHas('products', [
+            'external_source' => 'fakestore',
+            'external_id' => 1,
             'title' => 'Test Product',
             'category' => 'test',
             'price' => 19.99
@@ -60,7 +64,7 @@ class ProductImportServiceTest extends TestCase
         ]);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Failed to fetch products from API: 500');
+        $this->expectExceptionMessage('Failed to fetch products from fakestore: 500');
         
         $this->service->importProducts();
     }
@@ -74,7 +78,7 @@ class ProductImportServiceTest extends TestCase
         $result = $this->service->importProducts();
 
         $this->assertFalse($result['success']);
-        $this->assertEquals('No products found', $result['message']);
+        $this->assertStringContainsString('No products found', $result['message']);
     }
 
     public function test_updates_existing_products()
@@ -86,6 +90,7 @@ class ProductImportServiceTest extends TestCase
             'description' => 'Old description',
             'image' => 'old-image.jpg',
             'rating' => ['rate' => 3.0, 'count' => 50],
+            'external_source' => 'fakestore',
             'external_id' => 1
         ]);
 
@@ -118,7 +123,8 @@ class ProductImportServiceTest extends TestCase
     public function test_can_use_custom_api_url()
     {
         $customUrl = 'https://custom-api.com/products';
-        $service = new ProductImportService(Http::getFacadeRoot(), $customUrl);
+        $importer = new FakeStoreProductImporter(Http::getFacadeRoot(), $customUrl);
+        $service = new ProductImportService($importer);
 
         Http::fake([
             $customUrl => Http::response([
