@@ -24,7 +24,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(201)
             ->assertJson([
                 'success' => true,
-                'message' => 'User registered successfully',
+                'message' => 'Registered successfully',
             ])
             ->assertJsonStructure([
                 'success',
@@ -129,7 +129,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'success' => true,
-                'message' => 'Login successful',
+                'message' => 'Logged in successfully',
             ])
             ->assertJsonStructure([
                 'success',

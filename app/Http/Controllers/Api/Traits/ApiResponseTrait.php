@@ -7,7 +7,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 trait ApiResponseTrait
 {
-    protected function successResponse(string $message, mixed $data = null, int $statusCode = 200): JsonResponse
+    protected function successResponse(mixed $data = null, string $message = null, int $statusCode = 200): JsonResponse
     {
         $response = [
             'success' => true,
@@ -21,7 +21,7 @@ trait ApiResponseTrait
         return response()->json($response, $statusCode);
     }
 
-    protected function errorResponse(string $message, mixed $errors = null, int $statusCode = 400): JsonResponse
+    protected function errorResponse(mixed $data = null, string $message = null, int $statusCode = 400): JsonResponse
     {
         $response = [
             'success' => false,
@@ -35,11 +35,15 @@ trait ApiResponseTrait
         return response()->json($response, $statusCode);
     }
 
-    protected function successResponseWithPagination(LengthAwarePaginator $paginator, $resourceCollection, int $statusCode = 200): JsonResponse
+    protected function successWithPagination(LengthAwarePaginator $paginator, string $resourceClass = null, int $statusCode = 200): JsonResponse
     {
+        $data = $resourceClass 
+            ? $resourceClass::collection($paginator->items())
+            : $paginator->items();
+
         return response()->json([
             'success' => true,
-            'data' => $resourceCollection,
+            'data' => $data,
             'current_page' => $paginator->currentPage(),
             'last_page' => $paginator->lastPage(),
             'per_page' => $paginator->perPage(),

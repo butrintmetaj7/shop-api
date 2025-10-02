@@ -20,7 +20,7 @@ class AuthController extends ApiController
         $user = $this->authService->registerUser($request->validated());
         $token = $user->generateApiToken();
 
-        return $this->successResponse('User registered successfully', compact('user', 'token'), 201);
+        return $this->successResponse(compact('user', 'token'), 'Registered successfully', 201);
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -28,18 +28,18 @@ class AuthController extends ApiController
         $user = $this->authService->attemptLogin($request->validated());
         $token = $user->generateApiToken();
 
-        return $this->successResponse('Login successful', compact('user', 'token'));
+        return $this->successResponse(compact('user', 'token'), 'Logged in successfully');
     }
 
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
-        return $this->successResponse('Logged out successfully');
+        return $this->successResponse([], 'Logged out successfully');
     }
 
     public function profile(): JsonResponse
     {
-        return $this->successResponse('Profile retrieved successfully', auth()->user());
+        return $this->successResponse(auth()->user());
     }
 }
