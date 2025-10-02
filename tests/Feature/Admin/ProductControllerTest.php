@@ -19,10 +19,67 @@ class ProductControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function test_can_list_products()
+    public function test_non_admin_user_cannot_list_products()
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user);
+
+        $response = $this->getJson('/api/v1/admin/products');
+
+        $response->assertStatus(403)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Unauthorized. Admin access required.'
+            ]);
+    }
+
+    public function test_non_admin_user_cannot_view_product()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
+        $product = Product::factory()->create();
+
+        $response = $this->getJson("/api/v1/admin/products/{$product->id}");
+
+        $response->assertStatus(403)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Unauthorized. Admin access required.'
+            ]);
+    }
+
+    public function test_non_admin_user_cannot_update_product()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        
+        $product = Product::factory()->create();
+
+        $response = $this->putJson("/api/v1/admin/products/{$product->id}", [
+            'title' => 'Updated Title',
+            'price' => 99.99,
+            'description' => 'Updated description',
+            'image' => 'https://example.com/image.jpg',
+        ]);
+
+        $response->assertStatus(403)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Unauthorized. Admin access required.'
+            ]);
+
+        // Verify product was NOT updated
+        $this->assertDatabaseMissing('products', [
+            'id' => $product->id,
+            'title' => 'Updated Title',
+        ]);
+    }
+
+    public function test_can_list_products()
+    {
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin);
         
         Product::factory()->count(3)->create();
 
@@ -54,8 +111,8 @@ class ProductControllerTest extends TestCase
 
     public function test_can_show_single_product()
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin);
         
         $product = Product::factory()->create();
         
@@ -76,8 +133,8 @@ class ProductControllerTest extends TestCase
 
     public function test_show_product_returns_404_for_nonexistent_product()
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin);
         
         $response = $this->getJson('/api/v1/admin/products/9999');
 
@@ -86,8 +143,8 @@ class ProductControllerTest extends TestCase
 
     public function test_can_update_all_editable_fields()
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin);
         
         $product = Product::factory()->create();
         
@@ -114,8 +171,8 @@ class ProductControllerTest extends TestCase
 
     public function test_update_validates_input()
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin);
         
         $product = Product::factory()->create();
         
@@ -132,8 +189,8 @@ class ProductControllerTest extends TestCase
 
     public function test_update_product_with_all_editable_fields()
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin);
         
         $product = Product::factory()->create();
         
@@ -156,8 +213,8 @@ class ProductControllerTest extends TestCase
 
     public function test_update_returns_404_for_nonexistent_product()
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        $admin = User::factory()->admin()->create();
+        Sanctum::actingAs($admin);
         
         $response = $this->putJson('/api/v1/admin/products/9999', [
             'title' => fake()->words(3, true)

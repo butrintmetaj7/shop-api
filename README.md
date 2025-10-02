@@ -179,9 +179,6 @@ GET /api/v1/shop/products/{id}
     }
 }
 ```
-
-### Admin (Requires Authentication)
-
 #### List Products (Paginated)
 ```http
 GET /api/v1/admin/products

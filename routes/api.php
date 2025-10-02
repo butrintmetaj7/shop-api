@@ -23,7 +23,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/products', ShopProductController::class)->only(['index', 'show']);
     });
     
-    Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
+    Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
        Route::apiResource('/products', AdminProductController::class)->only(['index', 'show', 'update']);
     });
 });
