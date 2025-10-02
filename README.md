@@ -8,7 +8,10 @@ Shop application API built with Laravel.
 - Update products via authenticated API endpoints
 - Sync products without creating duplicates
 - API versioning for backward compatibility
-- Paginated product listings
+- Paginated product listings with search and filters
+- Role-based access control (User/Admin)
+- Database indexing for optimized search performance
+- Different resource representations (Shop vs Admin)
 
 ## Tech Stack
 
@@ -135,7 +138,18 @@ Authorization: Bearer {token}
 #### List Products (Paginated)
 ```http
 GET /api/v1/shop/products
+GET /api/v1/shop/products?search=laptop
+GET /api/v1/shop/products?category=electronics
+GET /api/v1/shop/products?min_price=50&max_price=200
+GET /api/v1/shop/products?search=phone&category=electronics&per_page=20
 ```
+
+**Query Parameters:**
+- `search` - Search in product title (indexed for performance)
+- `category` - Filter by specific category (exact match)
+- `min_price` - Minimum price filter
+- `max_price` - Maximum price filter
+- `per_page` - Results per page (default: 15)
 
 **Response:**
 ```json
@@ -179,13 +193,49 @@ GET /api/v1/shop/products/{id}
     }
 }
 ```
+
+### Admin (Requires Admin Role)
+
+**Note:** Admin routes require both authentication AND admin role. Regular users will receive a 403 Forbidden response.
+
 #### List Products (Paginated)
 ```http
 GET /api/v1/admin/products
+GET /api/v1/admin/products?search=laptop
+GET /api/v1/admin/products?category=electronics
 Authorization: Bearer {token}
 ```
 
-**Response:** Same as shop products list
+**Query Parameters:** Same as shop route (search, category, min_price, max_price, per_page)
+
+**Response:** Admin response includes additional fields (external_source, external_id, timestamps)
+
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "title": "Product Name",
+            "price": 109.95,
+            "description": "Product description",
+            "category": "men's clothing",
+            "image": "https://...",
+            "rating": {"rate": 3.9, "count": 120},
+            "external_source": "fakestore",
+            "external_id": 1,
+            "created_at": "2025-10-02T10:30:00.000000Z",
+            "updated_at": "2025-10-02T10:30:00.000000Z"
+        }
+    ],
+    "current_page": 1,
+    "last_page": 5,
+    "per_page": 15,
+    "total": 75,
+    "from": 1,
+    "to": 15
+}
+```
 
 #### Get Single Product
 ```http
@@ -193,7 +243,7 @@ GET /api/v1/admin/products/{id}
 Authorization: Bearer {token}
 ```
 
-**Response:** Same as shop single product
+**Response:** Returns single product with admin fields (external_source, external_id, timestamps)
 
 #### Update Product
 ```http

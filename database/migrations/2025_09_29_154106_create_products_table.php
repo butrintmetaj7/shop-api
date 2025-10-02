@@ -24,6 +24,7 @@ return new class extends Migration
             $table->timestamps();
             
             $table->unique(['external_source', 'external_id']);
+            $table->index('title');
         });
     }
 
