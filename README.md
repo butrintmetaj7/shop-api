@@ -7,6 +7,7 @@ Laravel REST API for a shop application with product management and role-based a
 - Laravel 12
 - MySQL
 - Laravel Sanctum (Authentication)
+- Scramble (API Documentation)
 - PHP 8.2+
 
 ## Installation
@@ -27,6 +28,13 @@ php artisan products:import
 - User/Admin roles
 - API versioning (v1)
 - Paginated responses
+
+## API Documentation
+
+Interactive API documentation is available at:
+```
+http://localhost/docs/api
+```
 
 ## API Endpoints
 

@@ -24,7 +24,7 @@ class UpdateProductRequest extends FormRequest
         return [
             'title' => 'sometimes|required|string|max:255',  
             'price' => 'sometimes|required|numeric|min:0',
-            'description' => 'sometimes|required|string',
+            'description' => 'sometimes|required|string|max:500',
             'image' => 'sometimes|required|url|max:500',
         ];
     }
